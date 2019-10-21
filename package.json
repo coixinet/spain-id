@@ -1,0 +1,26 @@
+{
+  "name": "spain-id",
+  "version": "1.0.0",
+  "description": "Spanis id documents validator",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jvmonjo/spain-id.git"
+  },
+  "keywords": [
+    "spain",
+    "id",
+    "nif",
+    "dni",
+    "cif"
+  ],
+  "author": "Josep V. Monjo",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jvmonjo/spain-id/issues"
+  },
+  "homepage": "https://github.com/jvmonjo/spain-id#readme"
+}
