@@ -1,10 +1,10 @@
 {
   "name": "spain-id",
   "version": "1.0.0",
-  "description": "Spanis id documents validator",
+  "description": "Spanish id documents validator (NIF, CIF, NIE)",
   "main": "index.js",
   "scripts": {
-    "test": "test"
+    "test": "node ./test"
   },
   "repository": {
     "type": "git",
