@@ -3,14 +3,14 @@
   "version": "1.0.3",
   "description": "Spanish id documents validator (NIF, CIF, NIE)",
   "main": "dist/index.umd.js",
-  "module": "dist/index.modern.mjs",
+  "module": "dist/index.modern.js",
   "scripts": {
     "test": "jest --passWithNoTests --silent",
     "dev": "microbundle src/index.js",
     "patch": "npm version patch",
-    "build": "npm run test && npm run patch && microbundle src/index.js",
+    "build": "microbundle src/index.js",
     "tdd": "jest --watchAll",
-    "deploy": "npm run build && npm publish"
+    "deploy": "npm run test && npm run patch && npm run build && npm publish"
   },
   "repository": {
     "type": "git",

@@ -3,7 +3,7 @@ const DNI_REGEX = /^(\d{8})([A-Z])$/
 const CIF_REGEX = /^([ABCDEFGHJKLMNPQRSUVW])(\d{7})([0-9A-J])$/
 const NIE_REGEX = /^[XYZ]\d{7,8}[A-Z]$/
 
-const validateSpanishId = (str) => {
+export const validateSpanishId = (str) => {
   // Ensure upcase and remove whitespace ang hyphens
   str = str.toUpperCase().replace(/\s/, '').replace('-', '')
 
@@ -26,7 +26,7 @@ const validateSpanishId = (str) => {
 
 }
 
-const spainIdType = (str) => {
+export const spainIdType = (str) => {
   if (str.match(DNI_REGEX)) {
     return 'dni';
   }
@@ -38,14 +38,14 @@ const spainIdType = (str) => {
   }
 }
 
-const validDNI = (str) => {
+export const validDNI = (str) => {
   const dni_letters = "TRWAGMYFPDXBNJZSQVHLCKE";
   const letter = dni_letters.charAt(parseInt(str, 10) % 23)
 
   return letter === str.charAt(8)
 }
 
-const validNIE = (str) => {
+export const validNIE = (str) => {
 
   // Change the initial letter for the corresponding number and validate as DNI
   var nie_prefix = str.charAt(0);
@@ -66,7 +66,7 @@ const validNIE = (str) => {
 
 };
 
-const validCIF = (str) => {
+export const validCIF = (str) => {
   if (!str || str.length !== 9) {
     return false;
   }
@@ -117,14 +117,4 @@ const validCIF = (str) => {
   }
 
   return String(digit) === control || letters[digit] === control;
-}
-
-
-
-exports = {
-  validateSpanishId,
-  spainIdType,
-  validDNI,
-  validNIE,
-  validCIF
 }
