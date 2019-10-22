@@ -10,7 +10,7 @@
     "patch": "npm version patch",
     "build": "npm run test && npm run patch && microbundle src/index.js",
     "tdd": "jest --watchAll",
-    "deploy": "npm publish"
+    "deploy": "npm run build && npm publish"
   },
   "repository": {
     "type": "git",
