@@ -4,7 +4,7 @@ const {
   validDNI,
   validNIE,
   validCIF
-} = require('../index')
+} = require('../src/index')
 
 describe('Id validations', () => {
   test('validate DNI 39740191D true', () => {

@@ -2,12 +2,15 @@
   "name": "spain-id",
   "version": "1.0.0",
   "description": "Spanish id documents validator (NIF, CIF, NIE)",
-  "main": "index.js",
+  "main": "dist/index.umd.js",
+  "module": "dist/index.modern.mjs",
   "scripts": {
     "test": "jest --passWithNoTests --silent",
-    "dev": "parcel index.js",
-    "build": "parcel build index.js",
-    "tdd": "jest --watchAll"
+    "dev": "microbundle src/index.js",
+    "patch": "npm version patch",
+    "build": "npm run test && npm run patch && microbundle src/index.js",
+    "tdd": "jest --watchAll",
+    "deploy": "npm publish"
   },
   "repository": {
     "type": "git",
@@ -28,6 +31,6 @@
   "homepage": "https://github.com/jvmonjo/spain-id#readme",
   "devDependencies": {
     "jest": "^24.9.0",
-    "parcel-bundler": "^1.12.4"
+    "microbundle": "^0.11.0"
   }
 }
