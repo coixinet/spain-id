@@ -1,10 +1,17 @@
-const {
+// const {
+//   validateSpanishId,
+//   spainIdType,
+//   validDNI,
+//   validNIE,
+//   validCIF
+// } = require('../dist/index.modern.mjs')
+import {
   validateSpanishId,
   spainIdType,
   validDNI,
   validNIE,
   validCIF
-} = require('../src/index')
+} from '../dist/index.modern.mjs'
 
 describe('Id validations', () => {
   test('validate DNI 39740191D true', () => {
