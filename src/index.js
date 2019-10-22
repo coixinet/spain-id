@@ -121,7 +121,7 @@ const validCIF = (str) => {
 
 
 
-module.exports = {
+module.exports.default = {
   validateSpanishId,
   spainIdType,
   validDNI,
