@@ -21,7 +21,7 @@ import { validateSpanishId, spainIdType, validDNI, validNIE, validCIF } from 'sp
 
 validateSpanishId('39740191D') // Validates the 3 types of document
 spainIdType('39740191D') // 'dni'
-validDNI('validDNI') // true
+validDNI('14741806W') // true
 validNIE('X8095495R') // true
 validCIF('P4622000J') // true
 
