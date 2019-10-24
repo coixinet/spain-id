@@ -27,5 +27,7 @@ validCIF('P4622000J') // true
 
 ```
 
+## Credits
+*Note*: For the most part is an adaptation of this algorithms https://gist.github.com/afgomez/5691823
 
-*Note*: For the most part is an adaptation of this algorithms https://gist.github.com/afgomez/5691823 But CIF validation is fixed.
+But CIF validation has been fixed, and code style changed.
