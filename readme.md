@@ -1,5 +1,5 @@
 ## What is this?
-A very small library to validate spanish id documents (NIF, CIF, NIE)
+A very small library to validate spanish id documents (NIF, CIF, NIE).
 
 ## Installation
 
@@ -26,3 +26,6 @@ validNIE('X8095495R') // true
 validCIF('P4622000J') // true
 
 ```
+
+
+*Note*: For the most part is an adaptation of this algorithms https://gist.github.com/afgomez/5691823 But CIF validation is fixed.
