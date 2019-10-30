@@ -15,7 +15,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jvmonjo/spain-id.git"
+    "url": "git+https://github.com/coixinet/spain-id.git"
   },
   "keywords": [
     "spain",
@@ -27,9 +27,9 @@
   "author": "Josep V. Monjo",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/jvmonjo/spain-id/issues"
+    "url": "https://github.com/coixinet/spain-id/issues"
   },
-  "homepage": "https://github.com/jvmonjo/spain-id#readme",
+  "homepage": "https://github.com/coixinet/spain-id#readme",
   "devDependencies": {
     "@babel/preset-env": "^7.6.3",
     "core-js": "^2.6.10",
