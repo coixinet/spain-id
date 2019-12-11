@@ -34,7 +34,8 @@
     "@babel/preset-env": "^7.6.3",
     "core-js": "^2.6.10",
     "jest": "^24.9.0",
-    "microbundle": "^0.11.0"
+    "microbundle": "^0.11.0",
+    "serialize-javascript": ">=2.1.1"
   },
   "dependencies": {}
 }
