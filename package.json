@@ -32,9 +32,12 @@
   "homepage": "https://github.com/coixinet/spain-id#readme",
   "devDependencies": {
     "@babel/preset-env": "^7.6.3",
+    "acorn": ">=5.7.4",
     "core-js": "^2.6.10",
-    "jest": "^24.9.0",
-    "microbundle": "^0.11.0"
+    "jest": "^25.2.7",
+    "kind-of": ">=6.0.3",
+    "microbundle": "^0.11.0",
+    "minimist": ">=1.2.3"
   },
   "dependencies": {}
 }
