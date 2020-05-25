@@ -10,8 +10,11 @@ describe('Id validations', () => {
   test('validate DNI 39740191D true', () => {
     expect(validateSpanishId('39740191D')).toBeTruthy()
     expect(validDNI('39740191D')).toBeTruthy()
+    expect(validNIE('39740191D')).toBeFalsy()
     expect(spainIdType('39740191D')).toBe('dni')
   })
+
+  
   test('validate DNI 39740191H false', () => {
     expect(spainIdType('39740191H')).toBe('dni')
     expect(validDNI('39740191H')).toBeFalsy()

@@ -60,6 +60,8 @@ export const validNIE = (str) => {
     case 'Z':
       nie_prefix = 2;
       break;
+    default:
+      return false;
   }
 
   return validDNI(nie_prefix + str.substr(1));
