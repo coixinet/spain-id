@@ -14,7 +14,6 @@ describe('Id validations', () => {
     expect(spainIdType('39740191-D')).toBe('dni')
   })
 
-  
   test('validate DNI 39740191H false', () => {
     expect(spainIdType('39740191H')).toBe('dni')
     expect(validDNI('39740191H')).toBeFalsy()
