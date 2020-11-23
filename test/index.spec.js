@@ -4,14 +4,14 @@ import {
   validDNI,
   validNIE,
   validCIF
-} from '../dist/index.umd.js'
+} from '../src/index.js'
 
 describe('Id validations', () => {
   test('validate DNI 39740191D true', () => {
-    expect(validateSpanishId('39740191D')).toBeTruthy()
-    expect(validDNI('39740191D')).toBeTruthy()
-    expect(validNIE('39740191D')).toBeFalsy()
-    expect(spainIdType('39740191D')).toBe('dni')
+    expect(validateSpanishId('3-9740191-D')).toBeTruthy()
+    expect(validDNI('39740191 D')).toBeTruthy()
+    expect(validNIE('39740191-D')).toBeFalsy()
+    expect(spainIdType('39740191-D')).toBe('dni')
   })
 
   
