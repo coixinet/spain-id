@@ -11,8 +11,9 @@
     "test": "jest --passWithNoTests --silent",
     "patch": "npm version patch",
     "tsc": "tsc -p tsconfig.json && tsc -p tsconfig-cjs.json",
+    "copy-dts": "tee ./lib/esm/index.d.ts ./lib/cjs/index.d.ts < ./src/index.d.ts",
     "tdd": "jest --watchAll",
-    "prepublish": "npm run tsc && npm run test && npm run patch"
+    "prepublish": "npm run tsc && npm run copy-dts && npm run test && npm run patch"
   },
   "repository": {
     "type": "git",
