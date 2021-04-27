@@ -12,7 +12,7 @@
     "patch": "npm version patch",
     "tsc": "tsc -p tsconfig.json && tsc -p tsconfig-cjs.json",
     "tdd": "jest --watchAll",
-    "prepublish": "npm run test && npm run patch && npm run tsc"
+    "prepublish": "npm run tsc && npm run test && npm run patch"
   },
   "repository": {
     "type": "git",
