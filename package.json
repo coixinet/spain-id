@@ -13,7 +13,7 @@
     "build": "npm run tsc",
     "tsc": "tsc -p tsconfig.json && tsc -p tsconfig-cjs.json",
     "tdd": "jest --watchAll",
-    "predeploy": "npm run test && npm run patch && npm run build",
+    "prepublishOnly": "npm run test && npm run patch && npm run build",
     "publish": "npm publish"
   },
   "repository": {
