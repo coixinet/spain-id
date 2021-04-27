@@ -1,6 +1,6 @@
 {
   "name": "spain-id",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "description": "Spanish id documents validator (NIF, CIF, NIE)",
   "main": "./lib/cjs/index.js",
   "module": "./lib/esm/index.js",
