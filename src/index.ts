@@ -3,12 +3,12 @@ const DNI_REGEX = /^(\d{8})([A-Z])$/
 const CIF_REGEX = /^([ABCDEFGHJKLMNPQRSUVW])(\d{7})([0-9A-J])$/
 const NIE_REGEX = /^[XYZ]\d{7,8}[A-Z]$/
 
-const sanitize = function (str) {
+const sanitize = function (str: string) {
   // Ensure uppercase and remove whitespace ang hyphens
   return str.toUpperCase().replace(/\s/g, '').replace(/-/g, '')
 }
 
-export const validateSpanishId = (str) => {
+export const validateSpanishId = (str: string) => {
   str = sanitize(str)
   let valid = false
   const type = spainIdType(str)
@@ -28,7 +28,7 @@ export const validateSpanishId = (str) => {
   return valid
 }
 
-export const spainIdType = (str) => {
+export const spainIdType = (str: string) => {
   str = sanitize(str)
   if (str.match(DNI_REGEX)) {
     return 'dni'
@@ -41,7 +41,7 @@ export const spainIdType = (str) => {
   }
 }
 
-export const validDNI = (str) => {
+export const validDNI = (str: string) => {
   str = sanitize(str)
   const dniLetters = 'TRWAGMYFPDXBNJZSQVHLCKE'
   const letter = dniLetters.charAt(parseInt(str, 10) % 23)
@@ -49,7 +49,7 @@ export const validDNI = (str) => {
   return letter === str.charAt(8)
 }
 
-export const validNIE = (str) => {
+export const validNIE = (str: string) => {
   str = sanitize(str)
 
   // Change the initial letter for the corresponding number and validate as DNI
@@ -57,13 +57,13 @@ export const validNIE = (str) => {
 
   switch (niePrefix) {
     case 'X':
-      niePrefix = 0
+      niePrefix = '0'
       break
     case 'Y':
-      niePrefix = 1
+      niePrefix = '1'
       break
     case 'Z':
-      niePrefix = 2
+      niePrefix = '2'
       break
     default:
       return false
@@ -72,7 +72,7 @@ export const validNIE = (str) => {
   return validDNI(niePrefix + str.substr(1))
 }
 
-export const validCIF = (str) => {
+export const validCIF = (str: string) => {
   str = sanitize(str)
   if (!str || str.length !== 9) {
     return false
@@ -84,7 +84,7 @@ export const validCIF = (str) => {
   const control = str.substr(str.length - 1)
   let sum = 0
   let i
-  let digit
+  let digit: number
 
   if (!letter.match(/[A-Z]/)) {
     return false
@@ -100,7 +100,7 @@ export const validCIF = (str) => {
     if (i % 2 === 0) {
       digit *= 2
       if (digit > 9) {
-        digit = parseInt(digit / 10) + (digit % 10)
+        digit = (digit / 10) + (digit % 10)
       }
 
       sum += digit
