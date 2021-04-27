@@ -1,4 +1,6 @@
-export declare const validateSpanishId: (x: string) => boolean
-export declare const spainIdType: (x: string) => string
-export declare const validNIE: (x: string) => boolean
-export declare const validCIF: (x: string) => boolean
+declare module 'spain-id' {
+    export const validateSpanishId: (x: string) => boolean
+    export const spainIdType: (x: string) => string
+    export const validNIE: (x: string) => boolean
+    export const validCIF: (x: string) => boolean
+}
