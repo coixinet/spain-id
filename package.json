@@ -10,10 +10,9 @@
   "scripts": {
     "test": "jest --passWithNoTests --silent",
     "patch": "npm version patch",
-    "build": "npm run tsc",
     "tsc": "tsc -p tsconfig.json && tsc -p tsconfig-cjs.json",
     "tdd": "jest --watchAll",
-    "prepublishOnly": "npm run test && npm run patch && npm run build",
+    "prepublishOnly": "npm run test && npm run patch && npm run tsc",
     "publish": "npm publish"
   },
   "repository": {
