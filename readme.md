@@ -9,7 +9,7 @@ npm i spain-id
 
 Or with yarn
 
-```
+```bash
 yarn add spain-id
 ```
 
@@ -27,7 +27,12 @@ validCIF('P4622000J') // true
 
 ```
 
+## Build and publish
+
+Run `npm publish`.
+
 ## Credits
+
 *Note*: For the most part this is an adaptation of these algorithms https://gist.github.com/afgomez/5691823
 
 CIF validation has been fixed, and code style changed.

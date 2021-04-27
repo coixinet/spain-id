@@ -1,6 +1,6 @@
 {
   "name": "spain-id",
-  "version": "1.0.17",
+  "version": "1.1.0",
   "description": "Spanish id documents validator (NIF, CIF, NIE)",
   "main": "./lib/cjs/index.js",
   "module": "./lib/esm/index.js",
@@ -12,8 +12,7 @@
     "patch": "npm version patch",
     "tsc": "tsc -p tsconfig.json && tsc -p tsconfig-cjs.json",
     "tdd": "jest --watchAll",
-    "prepublishOnly": "npm run test && npm run patch && npm run tsc",
-    "publish": "npm publish"
+    "prepublish": "npm run test && npm run patch && npm run tsc"
   },
   "repository": {
     "type": "git",
