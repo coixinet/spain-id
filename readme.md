@@ -1,9 +1,14 @@
+# spain-id
+
 ## What is this?
+
 A very small library to validate spanish id documents (NIF, CIF, NIE).
+
+From version 1.1.0 there is **TypeScript support**.
 
 ## Installation
 
-```
+```bash
 npm i spain-id
 ```
 
@@ -33,6 +38,6 @@ Run `npm publish`.
 
 ## Credits
 
-*Note*: For the most part this is an adaptation of these algorithms https://gist.github.com/afgomez/5691823
+*Note*: Based on these [algorithms](https://gist.github.com/afgomez/5691823)
 
-CIF validation has been fixed, and code style changed.
+CIF validation has been fixed, added TypeScript support, and code style changed.
