@@ -74,54 +74,54 @@ export const validNIE = (str: string) => {
 
 export const validCIF = (str: string) => {
   str = sanitize(str)
-  if (!str || str.length !== 9) {
-    return false
-  }
+	if (!str || str.length !== 9) {
+		return false
+	}
 
-  const letters = ['J', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I']
-  const digits = str.substr(1, str.length - 2)
-  const letter = str.substr(0, 1)
-  const control = str.substr(str.length - 1)
-  let sum = 0
+	const letters = ['J', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I']
+	const digits = str.substr(1, str.length - 2)
+	const letter = str.substr(0, 1)
+	const control = str.substr(str.length - 1)
+	let sum = 0
   let i
-  let digit: number
+	let digit
 
-  if (!letter.match(/[A-Z]/)) {
-    return false
-  }
+	if (!letter.match(/[A-Z]/)) {
+		return false
+	}
 
-  for (i = 0; i < digits.length; ++i) {
-    digit = parseInt(digits[i])
+	for (i = 0; i < digits.length; ++i) {
+		digit = parseInt(digits[i])
 
-    if (isNaN(digit)) {
-      return false
-    }
+		if (isNaN(digit)) {
+			return false
+		}
 
-    if (i % 2 === 0) {
-      digit *= 2
-      if (digit > 9) {
-        digit = (digit / 10) + (digit % 10)
-      }
+		if (i % 2 === 0) {
+			digit *= 2
+			if (digit > 9) {
+				digit = Math.floor(digit / 10) + (digit % 10)
+			}
 
-      sum += digit
-    } else {
-      sum += digit
-    }
-  }
+			sum += digit
+		} else {
+			sum += digit
+		}
+	}
 
-  sum %= 10
-  if (sum !== 0) {
-    digit = 10 - sum
-  } else {
-    digit = sum
-  }
+	sum %= 10
+	if (sum !== 0) {
+		digit = 10 - sum
+	} else {
+		digit = sum
+	}
 
-  if (letter.match(/[ABEH]/)) {
-    return String(digit) === control
-  }
-  if (letter.match(/[NPQRSW]/)) {
-    return letters[digit] === control
-  }
+	if (letter.match(/[ABEH]/)) {
+		return String(digit) === control
+	}
+	if (letter.match(/[NPQRSW]/)) {
+		return letters[digit] === control
+	}
 
-  return String(digit) === control || letters[digit] === control
+	return String(digit) === control || letters[digit] === control
 }

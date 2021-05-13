@@ -19,12 +19,19 @@ describe('Id validations', () => {
     expect(validDNI('39740191H')).toBeFalsy()
     expect(validateSpanishId('39740191H')).toBeFalsy()
   })
-  test('validateSpanishId Local goverment id P4622000J should be true', () => {
+  test('validateSpanishId Local government id P4622000J should be true', () => {
     expect(spainIdType('P4622000J')).toBe('cif')
     expect(validCIF('P4622000J')).toBeTruthy()
     expect(validateSpanishId('P4622000J')).toBeTruthy()
   })
-  test('validateSpanishId Local goverment id P4622000H should be false', () => {
+  test('validate CIF A28017895 should be true', () => {
+    expect(spainIdType('A28017895')).toBe('cif')
+    expect(validCIF('A28017895')).toBeTruthy()
+    expect(validCIF('A28017894')).toBeFalsy()
+    expect(validateSpanishId('A28017895')).toBeTruthy()
+    expect(validateSpanishId('A28017894')).toBeFalsy()
+  })
+  test('validateSpanishId Local government id P4622000H should be false', () => {
     expect(spainIdType('P4622000H')).toBe('cif')
     expect(validCIF('P4622000H')).toBeFalsy()
     expect(validateSpanishId('P4622000H')).toBeFalsy()
