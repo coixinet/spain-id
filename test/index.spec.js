@@ -7,6 +7,13 @@ import {
 } from '../lib/cjs/index.js'
 
 describe('Id validations', () => {
+  test('validate 8 digits DNI 9654234F true', () => {
+    expect(validateSpanishId('9654234-F')).toBeTruthy()
+    expect(validDNI('9654234 F')).toBeTruthy()
+    expect(validNIE('9654235F')).toBeFalsy()
+    expect(spainIdType('9654234F')).toBe('dni')
+  })
+
   test('validate DNI 39740191D true', () => {
     expect(validateSpanishId('3-9740191-D')).toBeTruthy()
     expect(validDNI('39740191 D')).toBeTruthy()

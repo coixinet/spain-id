@@ -4,8 +4,15 @@ const CIF_REGEX = /^([ABCDEFGHJKLMNPQRSUVW])(\d{7})([0-9A-J])$/
 const NIE_REGEX = /^[XYZ]\d{7,8}[A-Z]$/
 
 const sanitize = function (str: string) {
-  // Ensure uppercase and remove whitespace ang hyphens
-  return str.toUpperCase().replace(/\s/g, '').replace(/-/g, '')
+  // Ensure uppercase and remove whitespace and hyphens
+  str = str.toUpperCase().replace(/\s/g, '').replace(/-/g, '')
+
+  // Add leading zero to DNI numbers with 7 digits
+  if (/^\d{7}[A-Z]$/.test(str)) {
+    str = '0' + str
+  }
+
+  return str
 }
 
 export const validateSpanishId = (str: string) => {
@@ -74,54 +81,54 @@ export const validNIE = (str: string) => {
 
 export const validCIF = (str: string) => {
   str = sanitize(str)
-	if (!str || str.length !== 9) {
-		return false
-	}
+  if (!str || str.length !== 9) {
+    return false
+  }
 
-	const letters = ['J', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I']
-	const digits = str.substr(1, str.length - 2)
-	const letter = str.substr(0, 1)
-	const control = str.substr(str.length - 1)
-	let sum = 0
+  const letters = ['J', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I']
+  const digits = str.substr(1, str.length - 2)
+  const letter = str.substr(0, 1)
+  const control = str.substr(str.length - 1)
+  let sum = 0
   let i
-	let digit
+  let digit
 
-	if (!letter.match(/[A-Z]/)) {
-		return false
-	}
+  if (!letter.match(/[A-Z]/)) {
+    return false
+  }
 
-	for (i = 0; i < digits.length; ++i) {
-		digit = parseInt(digits[i])
+  for (i = 0; i < digits.length; ++i) {
+    digit = parseInt(digits[i])
 
-		if (isNaN(digit)) {
-			return false
-		}
+    if (isNaN(digit)) {
+      return false
+    }
 
-		if (i % 2 === 0) {
-			digit *= 2
-			if (digit > 9) {
-				digit = Math.floor(digit / 10) + (digit % 10)
-			}
+    if (i % 2 === 0) {
+      digit *= 2
+      if (digit > 9) {
+        digit = Math.floor(digit / 10) + (digit % 10)
+      }
 
-			sum += digit
-		} else {
-			sum += digit
-		}
-	}
+      sum += digit
+    } else {
+      sum += digit
+    }
+  }
 
-	sum %= 10
-	if (sum !== 0) {
-		digit = 10 - sum
-	} else {
-		digit = sum
-	}
+  sum %= 10
+  if (sum !== 0) {
+    digit = 10 - sum
+  } else {
+    digit = sum
+  }
 
-	if (letter.match(/[ABEH]/)) {
-		return String(digit) === control
-	}
-	if (letter.match(/[NPQRSW]/)) {
-		return letters[digit] === control
-	}
+  if (letter.match(/[ABEH]/)) {
+    return String(digit) === control
+  }
+  if (letter.match(/[NPQRSW]/)) {
+    return letters[digit] === control
+  }
 
-	return String(digit) === control || letters[digit] === control
+  return String(digit) === control || letters[digit] === control
 }
