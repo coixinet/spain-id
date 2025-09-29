@@ -31,6 +31,13 @@ describe('Id validations', () => {
     expect(validateSpanishId('A28017895')).toBeTruthy()
     expect(validateSpanishId('A28017894')).toBeFalsy()
   })
+  test('validate CIF B72327000 should be true', () => {
+    expect(spainIdType('B72327000')).toBe('cif')
+    expect(validCIF('B72327000')).toBeTruthy()
+    expect(validCIF('B72327001')).toBeFalsy()
+    expect(validateSpanishId('B72327000')).toBeTruthy()
+    expect(validateSpanishId('B72327001')).toBeFalsy()
+  })
   test('validateSpanishId Local government id P4622000H should be false', () => {
     expect(spainIdType('P4622000H')).toBe('cif')
     expect(validCIF('P4622000H')).toBeFalsy()
