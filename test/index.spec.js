@@ -4,7 +4,7 @@ import {
   validDNI,
   validNIE,
   validCIF
-} from '../lib/cjs/index.js'
+} from '../lib/cjs/index.cjs'
 
 describe('Id validations', () => {
   test('validate 8 digits DNI 9654234F true', () => {

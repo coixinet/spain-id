@@ -1,16 +1,24 @@
 {
   "name": "spain-id",
-  "version": "1.1.10",
+  "version": "1.1.11",
   "description": "Spanish id documents validator (NIF, CIF, NIE)",
-  "main": "./lib/cjs/index.js",
-  "module": "./lib/esm/index.js",
+  "main": "./lib/cjs/index.cjs",
+  "module": "./lib/esm/index.mjs",
+  "types": "./lib/esm/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./lib/esm/index.mjs",
+      "require": "./lib/cjs/index.cjs",
+      "types": "./lib/esm/index.d.ts"
+    }
+  },
   "files": [
     "lib/"
   ],
   "scripts": {
     "test": "jest --passWithNoTests --silent",
     "patch": "npm version patch",
-    "tsc": "tsc -p tsconfig.json && tsc -p tsconfig-cjs.json",
+    "tsc": "tsc -p tsconfig.json && mv ./lib/esm/index.js ./lib/esm/index.mjs && tsc -p tsconfig-cjs.json && mv ./lib/cjs/index.js ./lib/cjs/index.cjs",
     "copy-dts": "tee ./lib/esm/index.d.ts ./lib/cjs/index.d.ts < ./src/index.d.ts",
     "tdd": "jest --watchAll",
     "prepare": "npm run tsc && npm run copy-dts && npm run test && npm run patch"
