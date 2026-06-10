@@ -93,7 +93,7 @@ export const validCIF = (str: string) => {
   let i
   let digit
 
-  if (!letter.match(/[A-Z]/)) {
+  if (!letter.match(/[ABCDEFGHJKLMNPQRSUVW]/)) {
     return false
   }
 
