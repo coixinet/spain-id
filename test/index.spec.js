@@ -60,4 +60,12 @@ describe('Id validations', () => {
     expect(validNIE('X8095495F')).toBeFalsy()
     expect(validateSpanishId('X8095495F')).toBeFalsy()
   })
+  test('validCIF should reject NIE id X7564244G (issue #33)', () => {
+    expect(spainIdType('X7564244G')).toBe('nie')
+    expect(validNIE('X7564244G')).toBeTruthy()
+    expect(validCIF('X7564244G')).toBeFalsy()
+    // X7564244G is a valid NIE, so validateSpanishId is true,
+    // but it must never be treated as a CIF
+    expect(validateSpanishId('X7564244G')).toBeTruthy()
+  })
 })
