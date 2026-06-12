@@ -1,63 +1,63 @@
 name: Release
 
-# Automates versioning + npm publishing for spain-id.
+# Release automation via release-please.
 #
-# Tag-based flow -- nothing is ever committed to `master`, so the branch's
-# protection rules are never touched:
-#   1. A push to `master` (or a manual run) builds and tests the package.
-#   2. The next version is computed from the latest version published on npm
-#      (patch by default; choose the level for manual runs) and written into
-#      package.json in the runner only (never committed).
-#   3. The package is published to npm via OIDC trusted publishing (automatic
-#      provenance, no token stored).
-#   4. A matching tag + GitHub Release are created at the released commit.
+# Flow:
+#   1. On each push to `master`, release-please maintains a "Release PR" that
+#      bumps the version in package.json + package-lock.json and updates
+#      CHANGELOG.md, based on Conventional Commit messages since the last
+#      release (fix: -> patch, feat: -> minor, ! / BREAKING CHANGE -> major).
+#      Commits like chore:/docs:/ci: do NOT trigger a release on their own.
+#   2. When you merge that Release PR, release-please creates the git tag and
+#      GitHub Release, and the `publish` job pushes the package to npm via
+#      OIDC trusted publishing (automatic provenance, no token stored).
 #
-# Note: the version committed in package.json on `master` is just a baseline;
-# the real version of each release lives in the git tag / GitHub Release and
-# on npm. This is intentional -- it lets releases run without pushing to the
-# protected `master` branch.
+# Because the version lives in committed files updated through the Release PR,
+# package.json stays in sync with what is published, and nothing is ever
+# pushed directly to the protected `master` branch.
 #
 # Required setup (one-time):
 #   - npm trusted publisher: configured for this repo + release.yml, scoped to
 #     the `deploy` environment. No NPM_TOKEN secret is needed.
-#   - GitHub environment `deploy` must exist (Settings -> Environments) so the
-#     publish job runs in it and the OIDC claim matches the npm config.
+#   - GitHub environment `deploy` must exist (Settings -> Environments).
 
 on:
   push:
     branches: [master]
-  workflow_dispatch:
-    inputs:
-      release-type:
-        description: "Semver bump for this release"
-        type: choice
-        default: patch
-        options:
-          - patch
-          - minor
-          - major
 
-# Never run two releases at once.
+permissions:
+  contents: write
+  pull-requests: write
+
 concurrency:
   group: release
   cancel-in-progress: false
 
-permissions:
-  contents: write   # create the tag + GitHub Release
-  id-token: write   # OIDC token for npm trusted publishing + provenance
-
 jobs:
-  release:
+  release-please:
+    runs-on: ubuntu-latest
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+    steps:
+      - name: Run release-please
+        id: release
+        uses: googleapis/release-please-action@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+  publish:
+    needs: release-please
+    if: ${{ needs.release-please.outputs.release_created == 'true' }}
     runs-on: ubuntu-latest
     # Must match the environment configured on the npm trusted publisher.
     environment: deploy
-    # Let maintainers skip a release with [skip ci] in the commit message.
-    if: ${{ github.event_name == 'workflow_dispatch' || !contains(github.event.head_commit.message, '[skip ci]') }}
+    permissions:
+      contents: read
+      id-token: write   # OIDC token for npm trusted publishing + provenance
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -72,37 +72,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Test
-        run: npm test
-
-      - name: Build
-        run: npm run build
-
-      - name: Compute next version
-        id: version
-        run: |
-          BUMP="${{ github.event.inputs.release-type || 'patch' }}"
-          # Seed from the latest version published on npm; fall back to
-          # package.json the very first time the package is unpublished.
-          BASE="$(npm view "$(node -p "require('./package.json').name")" version 2>/dev/null || true)"
-          if [ -z "$BASE" ]; then
-            BASE="$(node -p "require('./package.json').version")"
-          fi
-          # Write the baseline, then bump -- no commit, no git tag.
-          npm version "$BASE" --no-git-tag-version --allow-same-version >/dev/null
-          NEW="$(npm version "$BUMP" --no-git-tag-version)"
-          echo "Releasing $NEW (from $BASE, bump $BUMP)"
-          echo "version=$NEW" >> "$GITHUB_OUTPUT"
-
       # Authenticated via OIDC trusted publishing; no NODE_AUTH_TOKEN needed.
       - name: Publish to npm
         run: npm publish
-
-      - name: Create tag and GitHub Release
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh release create "${{ steps.version.outputs.version }}" \
-            --target "${{ github.sha }}" \
-            --title "${{ steps.version.outputs.version }}" \
-            --generate-notes
