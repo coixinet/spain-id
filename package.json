@@ -1,6 +1,6 @@
 {
   "name": "spain-id",
-  "version": "1.1.13",
+  "version": "1.1.15",
   "description": "Spanish id documents validator (NIF, CIF, NIE)",
   "main": "./lib/cjs/index.cjs",
   "module": "./lib/esm/index.mjs",
@@ -18,8 +18,8 @@
   "scripts": {
     "test": "jest --passWithNoTests --silent",
     "patch": "npm version patch",
-    "tsc": "tsc -p tsconfig.json && mv ./lib/esm/index.js ./lib/esm/index.mjs && tsc -p tsconfig-cjs.json && mv ./lib/cjs/index.js ./lib/cjs/index.cjs",
-    "copy-dts": "tee ./lib/esm/index.d.ts ./lib/cjs/index.d.ts < ./src/index.d.ts",
+    "tsc": "tsc -p tsconfig.json && node -e \"const fs=require('fs');fs.renameSync('./lib/esm/index.js','./lib/esm/index.mjs');\" && tsc -p tsconfig-cjs.json && node -e \"const fs=require('fs');fs.renameSync('./lib/cjs/index.js','./lib/cjs/index.cjs');\"",
+    "copy-dts": "node -e \"const fs=require('fs');const d=fs.readFileSync('./src/index.d.ts');fs.writeFileSync('./lib/esm/index.d.ts', d);fs.writeFileSync('./lib/cjs/index.d.ts', d);\"",
     "build": "npm run tsc && npm run copy-dts",
     "tdd": "jest --watchAll",
     "prepare": "npm run build"
