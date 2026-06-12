@@ -20,8 +20,9 @@
     "patch": "npm version patch",
     "tsc": "tsc -p tsconfig.json && mv ./lib/esm/index.js ./lib/esm/index.mjs && tsc -p tsconfig-cjs.json && mv ./lib/cjs/index.js ./lib/cjs/index.cjs",
     "copy-dts": "tee ./lib/esm/index.d.ts ./lib/cjs/index.d.ts < ./src/index.d.ts",
+    "build": "npm run tsc && npm run copy-dts",
     "tdd": "jest --watchAll",
-    "prepare": "npm run tsc && npm run copy-dts && npm run test && npm run patch"
+    "prepare": "npm run build"
   },
   "repository": {
     "type": "git",

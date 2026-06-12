@@ -1,0 +1,94 @@
+name: Release
+
+# Automates versioning + npm publishing for spain-id.
+#
+# Flow:
+#   1. A push to `master` (or a manual run) builds and tests the package.
+#   2. The version is bumped (patch by default; choose the level for manual runs).
+#   3. The bump commit + tag are pushed back to `master` (commit tagged with
+#      [skip ci] so it does not re-trigger this workflow).
+#   4. A GitHub Release is created for the new tag.
+#   5. The package is published to npm with provenance.
+#
+# Required setup (one-time):
+#   - Repo secret NPM_TOKEN: an npm automation token with publish rights on
+#     the `spain-id` package (Settings -> Secrets and variables -> Actions).
+#   - Allow github-actions[bot] to push to the protected `master` branch:
+#     either add it to the branch-protection bypass list, or relax the rule.
+#     Without this, the "Push commit and tag" step will fail.
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+    inputs:
+      release-type:
+        description: "Semver bump for this release"
+        type: choice
+        default: patch
+        options:
+          - patch
+          - minor
+          - major
+
+# Never run two releases at once.
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+permissions:
+  contents: write   # push the bump commit/tag and create the GitHub Release
+  id-token: write   # npm publish --provenance
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    # Skip the run triggered by our own bump commit.
+    if: ${{ github.event_name == 'workflow_dispatch' || !contains(github.event.head_commit.message, '[skip ci]') }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: https://registry.npmjs.org
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Test
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+      - name: Configure git author
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Bump version
+        id: bump
+        run: |
+          NEW_VERSION="$(npm version "${{ github.event.inputs.release-type || 'patch' }}" -m 'chore(release): %s [skip ci]')"
+          echo "version=${NEW_VERSION}" >> "$GITHUB_OUTPUT"
+
+      - name: Push commit and tag
+        run: git push --follow-tags origin "HEAD:${{ github.ref_name }}"
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "${{ steps.bump.outputs.version }}" \
+            --title "${{ steps.bump.outputs.version }}" \
+            --generate-notes
+
+      - name: Publish to npm
+        run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
