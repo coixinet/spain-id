@@ -8,11 +8,14 @@ name: Release
 #   3. The bump commit + tag are pushed back to `master` (commit tagged with
 #      [skip ci] so it does not re-trigger this workflow).
 #   4. A GitHub Release is created for the new tag.
-#   5. The package is published to npm with provenance.
+#   5. The package is published to npm via OIDC trusted publishing (with
+#      automatic provenance) -- no npm token required.
 #
 # Required setup (one-time):
-#   - Repo secret NPM_TOKEN: an npm automation token with publish rights on
-#     the `spain-id` package (Settings -> Secrets and variables -> Actions).
+#   - npm trusted publisher: already configured for this repo + release.yml,
+#     scoped to the `deploy` environment. No NPM_TOKEN secret is needed.
+#   - GitHub environment `deploy` must exist (Settings -> Environments) so the
+#     publish job can run in it and the OIDC claim matches the npm config.
 #   - Allow github-actions[bot] to push to the protected `master` branch:
 #     either add it to the branch-protection bypass list, or relax the rule.
 #     Without this, the "Push commit and tag" step will fail.
@@ -38,11 +41,13 @@ concurrency:
 
 permissions:
   contents: write   # push the bump commit/tag and create the GitHub Release
-  id-token: write   # npm publish --provenance
+  id-token: write   # OIDC token for npm trusted publishing + provenance
 
 jobs:
   release:
     runs-on: ubuntu-latest
+    # Must match the environment configured on the npm trusted publisher.
+    environment: deploy
     # Skip the run triggered by our own bump commit.
     if: ${{ github.event_name == 'workflow_dispatch' || !contains(github.event.head_commit.message, '[skip ci]') }}
     steps:
@@ -56,6 +61,10 @@ jobs:
         with:
           node-version: 20
           registry-url: https://registry.npmjs.org
+
+      # Trusted publishing (OIDC) requires npm >= 11.5.1; Node 20 ships npm 10.
+      - name: Update npm
+        run: npm install -g npm@latest
 
       - name: Install dependencies
         run: npm ci
@@ -88,7 +97,6 @@ jobs:
             --title "${{ steps.bump.outputs.version }}" \
             --generate-notes
 
+      # Authenticated via OIDC trusted publishing; no NODE_AUTH_TOKEN needed.
       - name: Publish to npm
-        run: npm publish --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish
