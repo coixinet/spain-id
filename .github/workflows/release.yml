@@ -2,23 +2,26 @@ name: Release
 
 # Automates versioning + npm publishing for spain-id.
 #
-# Flow:
+# Tag-based flow -- nothing is ever committed to `master`, so the branch's
+# protection rules are never touched:
 #   1. A push to `master` (or a manual run) builds and tests the package.
-#   2. The version is bumped (patch by default; choose the level for manual runs).
-#   3. The bump commit + tag are pushed back to `master` (commit tagged with
-#      [skip ci] so it does not re-trigger this workflow).
-#   4. A GitHub Release is created for the new tag.
-#   5. The package is published to npm via OIDC trusted publishing (with
-#      automatic provenance) -- no npm token required.
+#   2. The next version is computed from the latest version published on npm
+#      (patch by default; choose the level for manual runs) and written into
+#      package.json in the runner only (never committed).
+#   3. The package is published to npm via OIDC trusted publishing (automatic
+#      provenance, no token stored).
+#   4. A matching tag + GitHub Release are created at the released commit.
+#
+# Note: the version committed in package.json on `master` is just a baseline;
+# the real version of each release lives in the git tag / GitHub Release and
+# on npm. This is intentional -- it lets releases run without pushing to the
+# protected `master` branch.
 #
 # Required setup (one-time):
-#   - npm trusted publisher: already configured for this repo + release.yml,
-#     scoped to the `deploy` environment. No NPM_TOKEN secret is needed.
+#   - npm trusted publisher: configured for this repo + release.yml, scoped to
+#     the `deploy` environment. No NPM_TOKEN secret is needed.
 #   - GitHub environment `deploy` must exist (Settings -> Environments) so the
-#     publish job can run in it and the OIDC claim matches the npm config.
-#   - Allow github-actions[bot] to push to the protected `master` branch:
-#     either add it to the branch-protection bypass list, or relax the rule.
-#     Without this, the "Push commit and tag" step will fail.
+#     publish job runs in it and the OIDC claim matches the npm config.
 
 on:
   push:
@@ -40,7 +43,7 @@ concurrency:
   cancel-in-progress: false
 
 permissions:
-  contents: write   # push the bump commit/tag and create the GitHub Release
+  contents: write   # create the tag + GitHub Release
   id-token: write   # OIDC token for npm trusted publishing + provenance
 
 jobs:
@@ -48,7 +51,7 @@ jobs:
     runs-on: ubuntu-latest
     # Must match the environment configured on the npm trusted publisher.
     environment: deploy
-    # Skip the run triggered by our own bump commit.
+    # Let maintainers skip a release with [skip ci] in the commit message.
     if: ${{ github.event_name == 'workflow_dispatch' || !contains(github.event.head_commit.message, '[skip ci]') }}
     steps:
       - name: Checkout
@@ -75,28 +78,31 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Configure git author
+      - name: Compute next version
+        id: version
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-      - name: Bump version
-        id: bump
-        run: |
-          NEW_VERSION="$(npm version "${{ github.event.inputs.release-type || 'patch' }}" -m 'chore(release): %s [skip ci]')"
-          echo "version=${NEW_VERSION}" >> "$GITHUB_OUTPUT"
-
-      - name: Push commit and tag
-        run: git push --follow-tags origin "HEAD:${{ github.ref_name }}"
-
-      - name: Create GitHub Release
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh release create "${{ steps.bump.outputs.version }}" \
-            --title "${{ steps.bump.outputs.version }}" \
-            --generate-notes
+          BUMP="${{ github.event.inputs.release-type || 'patch' }}"
+          # Seed from the latest version published on npm; fall back to
+          # package.json the very first time the package is unpublished.
+          BASE="$(npm view "$(node -p "require('./package.json').name")" version 2>/dev/null || true)"
+          if [ -z "$BASE" ]; then
+            BASE="$(node -p "require('./package.json').version")"
+          fi
+          # Write the baseline, then bump -- no commit, no git tag.
+          npm version "$BASE" --no-git-tag-version --allow-same-version >/dev/null
+          NEW="$(npm version "$BUMP" --no-git-tag-version)"
+          echo "Releasing $NEW (from $BASE, bump $BUMP)"
+          echo "version=$NEW" >> "$GITHUB_OUTPUT"
 
       # Authenticated via OIDC trusted publishing; no NODE_AUTH_TOKEN needed.
       - name: Publish to npm
         run: npm publish
+
+      - name: Create tag and GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "${{ steps.version.outputs.version }}" \
+            --target "${{ github.sha }}" \
+            --title "${{ steps.version.outputs.version }}" \
+            --generate-notes
