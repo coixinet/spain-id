@@ -17,6 +17,8 @@
   ],
   "scripts": {
     "test": "jest --passWithNoTests --silent",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "patch": "npm version patch",
     "tsc": "tsc -p tsconfig.json && node -e \"const fs=require('fs');fs.renameSync('./lib/esm/index.js','./lib/esm/index.mjs');\" && tsc -p tsconfig-cjs.json && node -e \"const fs=require('fs');fs.renameSync('./lib/cjs/index.js','./lib/cjs/index.cjs');\"",
     "copy-dts": "node -e \"const fs=require('fs');const d=fs.readFileSync('./src/index.d.ts');fs.writeFileSync('./lib/esm/index.d.ts', d);fs.writeFileSync('./lib/cjs/index.d.ts', d);\"",
@@ -41,19 +43,22 @@
     "url": "https://github.com/coixinet/spain-id/issues"
   },
   "homepage": "https://github.com/coixinet/spain-id#readme",
+  "overrides": {
+    "babel-plugin-istanbul": {
+      "js-yaml": "^3.14.2"
+    },
+    "brace-expansion@<1.1.13": "^1.1.13"
+  },
   "devDependencies": {
-    "@babel/preset-env": "^7.13.15",
-    "acorn": ">=8.2.1",
-    "core-js": "^3.11.0",
-    "eslint": "^7.25.0",
-    "eslint-config-standard": "^16.0.2",
-    "eslint-plugin-import": "^2.22.1",
-    "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^4.3.1",
-    "jest": "^26.6.3",
-    "kind-of": ">=6.0.3",
-    "minimist": ">=1.2.5",
-    "serialize-javascript": ">=5.0.1",
+    "@babel/preset-env": "^7.29.7",
+    "acorn": "^8.17.0",
+    "core-js": "^3.49.0",
+    "eslint": "^9.39.4",
+    "jest": "^30.4.2",
+    "kind-of": "^6.0.3",
+    "minimist": "^1.2.8",
+    "neostandard": "^0.12.2",
+    "serialize-javascript": "^7.0.5",
     "typescript": "^5.9.2"
   }
 }
