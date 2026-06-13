@@ -13,6 +13,13 @@ updates:
       dev-dependencies:
         patterns:
           - "*"
+    ignore:
+      # neostandard's eslint peer dependency is currently ^9. Hold eslint at
+      # 9 until neostandard ships eslint 10 support, then bump them together
+      # manually (a major eslint bump alone breaks `npm ci`).
+      - dependency-name: eslint
+        update-types:
+          - version-update:semver-major
     open-pull-requests-limit: 5
 
   - package-ecosystem: github-actions
